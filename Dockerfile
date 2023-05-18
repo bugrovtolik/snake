@@ -6,7 +6,7 @@ WORKDIR /home/gradle
 
 # Copy the Gradle configuration files into the Docker image
 COPY --chown=gradle:gradle gradle/ gradle/
-COPY --chown=gradle:gradle build.gradle settings.gradle gradlew ./
+COPY --chown=gradle:gradle build.gradle.kts settings.gradle.kts gradlew ./
 
 # Copy the source code into the Docker image
 COPY --chown=gradle:gradle src/ src/
