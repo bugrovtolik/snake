@@ -1,0 +1,283 @@
+<html>
+<head>
+    <title>
+        Kvadratik2
+    </title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js"></script>
+
+    <style>
+        body {
+            color: #444;
+            background-color: #fff;
+            font-family: 'Lato', sans-serif;
+        }
+
+        input {
+            width: 50px;
+            height: 32px;
+            padding: 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            box-sizing: border-box;
+        }
+
+        .clr-field button {
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div style="display: flex; justify-content: space-evenly">
+    <div style="display: flex; flex-direction: column; justify-content: center">
+        <div>
+            <label>
+                <input id="colorHead1" value="PaleVioletRed" data-coloris>
+                ColorHead1
+            </label>
+        </div>
+        <div style="margin-top: 20px">
+            <label>
+                <input id="colorTail1" value="Pink" data-coloris>
+                ColorTail1
+            </label>
+        </div>
+        <div style="margin-top: 120px">
+            <label>
+                <input id="colorHead2" value="LightSkyBlue" data-coloris>
+                ColorHead2
+            </label>
+        </div>
+        <div style="margin-top: 20px">
+            <label>
+                <input id="colorTail2" value="LightBlue" data-coloris>
+                ColorTail2
+            </label>
+        </div>
+        <div style="margin-top: 120px; position: relative;">
+            <label>
+                <input id="colorApple" value="Crimson" data-coloris>
+                ColorApple
+            </label>
+        </div>
+        <div style="margin-top: 20px; position: relative;">
+            <label>
+                <input id="colorBackground" value="mintcream" data-coloris>
+                ColorBackground
+            </label>
+        </div>
+    </div>
+
+
+    <div id="bagato_kvadratikiv" style="display: flex; align-items: center; justify-content: center"></div>
+
+    <div style="display: flex; flex-direction: column; justify-content: center" hidden="true">
+        Length
+        <div>
+            Player 1 = <span id="result1"></span> squares
+        </div>
+        <div>
+            Player 2 = <span id="result2"></span> squares
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    Coloris({
+        alpha: false,
+        themeMode: "dark",
+        format: "rgb"
+    })
+
+    let width = 25
+    let colorApple = "Crimson"
+    let colorBackground = "mintcream"
+    let colorHead1 = "PaleVioletRed"
+    let colorTail1 = "Pink"
+    let colorHead2 = "LightSkyBlue"
+    let colorTail2 = "LightBlue"
+    let intervalId
+    let pos1 = 45
+    let pos2 = 505
+
+    for (let i = 0; i < width; i++) {
+        let group = document.createElement("div")
+        for (let j = 0; j < width; j++) {
+            let div = document.createElement("div")
+            div.style.background = colorBackground
+            div.style.width = "28px"
+            div.style.height = "28px"
+            div.id = i * width + j
+            // div.innerHTML = i * width + j
+            group.append(div)
+
+        }
+        document.getElementById("bagato_kvadratikiv").append(group)
+    }
+
+    let head1 = document.getElementById(pos1)
+    let tail1 = [document.getElementById(pos1 + 1), document.getElementById(pos1 + 2)]
+    let head2 = document.getElementById(pos2)
+    let tail2 = [document.getElementById(pos2 + 1), document.getElementById(pos2 + 2)]
+    let dir1 = "right"
+    let dir2 = "left"
+    head1.style.background = colorHead1
+    tail1[0].style.background = colorTail1
+    tail1[1].style.background = colorTail1
+    head2.style.background = colorHead2
+    tail2[0].style.background = colorTail2
+    tail2[1].style.background = colorTail2
+    let apple = generateApple()
+
+    document.getElementById("colorHead1").addEventListener("input", (event) => colorHead1 = event.target.value)
+    document.getElementById("colorHead2").addEventListener("input", (event) => colorHead2 = event.target.value)
+    document.getElementById("colorTail1").addEventListener("input", (event) => colorTail1 = event.target.value)
+    document.getElementById("colorTail2").addEventListener("input", (event) => colorTail2 = event.target.value)
+    document.getElementById("colorApple").addEventListener("input", (event) => {
+        colorApple = event.target.value
+        apple.style.background = colorApple
+    })
+    document.getElementById("colorBackground").addEventListener("input", (event) => {
+        for (let i = 0; i < width * width; i++) {
+            let div = document.getElementById(i)
+            if (div.style.background === colorBackground) {
+                div.style.background = event.target.value
+            }
+        }
+        colorBackground = event.target.value
+    })
+
+    intervalId = window.setInterval(() => {
+        if (dir1 === "down") {
+            if ((pos1 + 1) % width === 0) {
+                pos1 = pos1 - width
+            }
+            pos1 = pos1 + 1
+        } else if (dir1 === "up") {
+            if (pos1 % width === 0) {
+                pos1 = pos1 + width
+            }
+            pos1 = pos1 - 1
+        } else if (dir1 === "left") {
+            if (0 <= pos1 && pos1 < width) {
+                pos1 = pos1 + width * width
+            }
+            pos1 = pos1 - width
+        } else if (dir1 === "right") {
+            if (width * width - width <= pos1 && pos1 < width * width) {
+                pos1 = pos1 - width * width
+            }
+            pos1 = pos1 + width
+        }
+        head1.style.background = colorTail1
+        tail1.unshift(head1)
+        head1 = document.getElementById(pos1)
+        if (tail1.includes(head1)) {
+            window.clearInterval(intervalId)
+        }
+        if (head1 === apple) {
+            apple = generateApple()
+        } else {
+            tail1.pop().style.background = colorBackground
+        }
+        head1.style.background = colorHead1
+        if (dir2 === "down") {
+            if ((pos2 + 1) % width === 0) {
+                pos2 = pos2 - width
+            }
+            pos2 = pos2 + 1
+        } else if (dir2 === "up") {
+            if (pos2 % width === 0) {
+                pos2 = pos2 + width
+            }
+            pos2 = pos2 - 1
+        } else if (dir2 === "left") {
+            if (0 <= pos2 && pos2 < width) {
+                pos2 = pos2 + width * width
+            }
+            pos2 = pos2 - width
+        } else if (dir2 === "right") {
+            if (width * width - width <= pos2 && pos2 < width * width) {
+                pos2 = pos2 - width * width
+            }
+            pos2 = pos2 + width
+        }
+        head2.style.background = colorTail2
+        tail2.unshift(head2)
+        head2 = document.getElementById(pos2)
+        if (tail2.includes(head2) || head2 === head1) {
+            window.clearInterval(intervalId)
+        }
+        if (head2 === apple) {
+            apple = generateApple()
+        } else {
+            tail2.pop().style.background = colorBackground
+        }
+        head2.style.background = colorHead2
+
+        if (tail1.includes(head2)) {
+            let index = tail1.indexOf(head2)
+            for (let i = index; i < tail1.length; i++) {
+                tail1[i].style.background = colorBackground
+            }
+            tail1 = tail1.slice(0, index)
+        }
+        if (tail2.includes(head1)) {
+            let index = tail2.indexOf(head1)
+            for (let i = index; i < tail2.length; i++) {
+                tail2[i].style.background = colorBackground
+            }
+            tail2 = tail2.slice(0, index)
+        }
+    }, 200)
+
+    document.addEventListener("keydown", (event) => {
+        if (event.code === "KeyS") {
+            if (dir1 === "up") return
+            dir1 = "down"
+        } else if (event.code === "KeyW") {
+            if (dir1 === "down") return
+            dir1 = "up"
+        } else if (event.code === "KeyA") {
+            if (dir1 === "right") return
+            dir1 = "left"
+        } else if (event.code === "KeyD") {
+            if (dir1 === "left") return
+            dir1 = "right"
+        } else if (event.code === "ArrowDown") {
+            if (dir2 === "up") return
+            dir2 = "down"
+        } else if (event.code === "ArrowUp") {
+            if (dir2 === "down") return
+            dir2 = "up"
+        } else if (event.code === "ArrowLeft") {
+            if (dir2 === "right") return
+            dir2 = "left"
+        } else if (event.code === "ArrowRight") {
+            if (dir2 === "left") return
+            dir2 = "right"
+        }
+    })
+
+    function generateApple() {
+        let num = Math.floor(Math.random() * 100)
+        let div = document.getElementById(num)
+        console.log(div.style.background)
+        console.log(colorBackground)
+        if (div.style.background === colorBackground) {
+            div.style.background = "Red"
+            return div
+        } else {
+            return generateApple()
+        }
+    }
+</script>
+</body>
+</html>
