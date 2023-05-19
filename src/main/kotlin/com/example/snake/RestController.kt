@@ -1,5 +1,6 @@
 package com.example.snake
 
+import org.springframework.core.io.ClassPathResource
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -35,5 +36,5 @@ class RestController {
     }
 
     @GetMapping("/snake")
-    fun snake() = File("snake.html").readBytes()
+    fun snake() = ClassPathResource("html/snake.html").inputStream.readBytes()
 }
